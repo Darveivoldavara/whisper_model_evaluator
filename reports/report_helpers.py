@@ -142,7 +142,7 @@ def clean_text(text):
     return text
 
 
-async def transcribe_whisper(file_path, server_url):
+async def transcribe_whisper(file_path, server_url, vad=1):
 
     # https://github.com/linto-ai/whisper-timestamped
     # https://github.com/openai/whisper
@@ -152,7 +152,9 @@ async def transcribe_whisper(file_path, server_url):
         files = {
             "file": (os.path.basename(file_path), open(file_path, "rb"), "audio/wav")
         }
-        response = await client.post(server_url, files=files)
+        data = {"vad": vad}
+
+        response = await client.post(server_url, files=files, data=data)
         if response.status_code == 200:
             data = response.json()
             if "segments" in data:
